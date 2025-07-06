@@ -113,5 +113,3 @@ npm start
 - Update styles in `frontend/src` as needed.
 - Extend backend API for more features (orders, reviews, etc).
 
-## License
-MIT 
