@@ -22,6 +22,17 @@ CREATE TABLE IF NOT EXISTS food (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Create cart table
+CREATE TABLE IF NOT EXISTS cart (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  item_id INT NOT NULL,
+  quantity INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (item_id) REFERENCES food(id)
+);
+
 -- Insert sample users (password is bcrypt hash for 'admin123' and 'user123')
 INSERT INTO users (name, email, password, role) VALUES
 ('Admin', 'admin@example.com', '$2b$10$CwTycUXWue0Thq9StjUM0uJ8i6rQ8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8', 'admin'),

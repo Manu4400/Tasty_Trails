@@ -1,9 +1,7 @@
-// eslint-disable-next-line no-unused-vars
 import React from 'react'
 import './ExploreMenu.css'
 import { menu_list } from '../../assets/assets'
 
-// eslint-disable-next-line react/prop-types
 const ExploreMenu = ({category,setCategory}) => {
 
   return (

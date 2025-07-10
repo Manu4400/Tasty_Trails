@@ -1,7 +1,9 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState, useContext } from "react";
+import { UserContext } from "./UserContext";
 export const StoreContext = createContext(null);
 
 const StoreContextProvider = (props) => {
+    const { user } = useContext(UserContext);
     const [cartItems, setCartItems] = useState({});
     const [foodList, setFoodList] = useState([]);
 
@@ -11,16 +13,67 @@ const StoreContextProvider = (props) => {
             .then(data => setFoodList(data));
     }, []);
 
-    const addToCart = (itemId) => {
-        if (!cartItems[itemId]) {
-            setCartItems((prev)=>({...prev,[itemId]:1}))
+    useEffect(() => {
+        if (user && user.token) {
+            fetch("http://localhost:4000/api/cart", {
+                headers: { 'Authorization': `Bearer ${user.token}` }
+            })
+            .then(res => res.json())
+            .then(data => {
+                const cartObj = {};
+                data.forEach(item => { cartObj[item.item_id] = item.quantity; });
+                setCartItems(cartObj);
+            });
+        } else {
+            setCartItems({});
         }
-        else {
-            setCartItems((prev)=>({...prev,[itemId]:prev[itemId]+1}))
+    }, [user]);
+
+    const addToCart = async (itemId) => {
+        const newQty = (cartItems[itemId] || 0) + 1;
+        setCartItems((prev)=>({...prev,[itemId]:newQty}));
+        if (user && user.token) {
+            await fetch("http://localhost:4000/api/cart", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token}`
+                },
+                body: JSON.stringify({ item_id: itemId, quantity: newQty })
+            });
         }
     }
-    const removeFromCart = (itemId) => {
-        setCartItems((prev)=>({...prev,[itemId]:prev[itemId]-1}))
+    const removeFromCart = async (itemId) => {
+        const newQty = (cartItems[itemId] || 0) - 1;
+        if (newQty > 0) {
+            setCartItems((prev)=>({...prev,[itemId]:newQty}));
+            if (user && user.token) {
+                await fetch("http://localhost:4000/api/cart", {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${user.token}`
+                    },
+                    body: JSON.stringify({ item_id: itemId, quantity: newQty })
+                });
+            }
+        } else {
+            setCartItems((prev) => {
+                const copy = { ...prev };
+                delete copy[itemId];
+                return copy;
+            });
+            if (user && user.token) {
+                await fetch("http://localhost:4000/api/cart", {
+                    method: "DELETE",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${user.token}`
+                    },
+                    body: JSON.stringify({ item_id: itemId })
+                });
+            }
+        }
     }
 
     const getTotalCartAmount = () => {

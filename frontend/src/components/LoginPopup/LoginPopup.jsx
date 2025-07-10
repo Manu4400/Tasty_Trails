@@ -1,16 +1,14 @@
-// eslint-disable-next-line no-unused-vars
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import './LoginPopup.css'
 import { assets } from '../../assets/assets'
 import { UserContext } from '../../context/UserContext'
 
-// eslint-disable-next-line react/prop-types
-const LoginPopup = ({ setShowLogin }) => {  // Destructure setShowLogin
+const LoginPopup = ({ setShowLogin }) => {
     const [currState, setCurrState] = useState("Login")
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
-    const { setUser } = useContext(UserContext);
+    const { setUser } = useState(UserContext);
     const [error, setError] = useState("");
     const [token, setToken] = useState(null);
 

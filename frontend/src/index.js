@@ -9,10 +9,10 @@ import { UserProvider } from './context/UserContext.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <BrowserRouter>
-    <StoreContextProvider>
-      <UserProvider>
+    <UserProvider>
+      <StoreContextProvider>
         <App />
-      </UserProvider>
-    </StoreContextProvider>
+      </StoreContextProvider>
+    </UserProvider>
   </BrowserRouter>
 )

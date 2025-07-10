@@ -1,10 +1,8 @@
-// eslint-disable-next-line no-unused-vars
 import React, { useContext } from 'react';
 import './FoodItem.css';
 import { assets } from '../../assets/assets';
 import { StoreContext } from '../../context/StoreContext';
 
-// eslint-disable-next-line react/prop-types
 const FoodItem = ({ id, name, price, description, image }) => {
   const { cartItems, addToCart, removeFromCart } = useContext(StoreContext);
 
@@ -38,7 +36,7 @@ const FoodItem = ({ id, name, price, description, image }) => {
       <div className="food-item-info">
         <div className="food-item-name-rating">
           <p>{name}</p>
-          <img src={assets.rating_starts} alt="Rating" /> {/* Corrected typo */}
+          <img src={assets.rating_starts} alt="Rating" />
         </div>
         <p className='food-item-desc'>{description}</p>
         <p className='food-item-price'>${price}</p>

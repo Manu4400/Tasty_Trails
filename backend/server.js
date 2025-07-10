@@ -106,6 +106,64 @@ app.get('/api/food', (req, res) => {
   });
 });
 
+// --- CART ENDPOINTS ---
+
+// Middleware to authenticate and get user id from JWT
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers["authorization"];
+  if (!authHeader) return res.status(401).json({ error: "No token provided" });
+  const token = authHeader.split(" ")[1];
+  jwt.verify(token, JWT_SECRET, (err, decoded) => {
+    if (err) return res.status(401).json({ error: "Invalid token" });
+    req.user = decoded;
+    next();
+  });
+}
+
+// Get cart items for logged-in user
+app.get('/api/cart', authenticateToken, (req, res) => {
+  const userId = req.user.id;
+  connection.query(
+    'SELECT c.id, c.item_id, c.quantity, f.name, f.price, f.image FROM cart c JOIN food f ON c.item_id = f.id WHERE c.user_id = ?',
+    [userId],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err });
+      res.json(results);
+    }
+  );
+});
+
+// Add or update cart item
+app.post('/api/cart', authenticateToken, (req, res) => {
+  const userId = req.user.id;
+  const { item_id, quantity } = req.body;
+  if (!item_id || quantity == null) return res.status(400).json({ error: 'Missing item_id or quantity' });
+  // Upsert logic
+  connection.query(
+    'INSERT INTO cart (user_id, item_id, quantity) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE quantity = ?',
+    [userId, item_id, quantity, quantity],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err });
+      res.json({ success: true });
+    }
+  );
+});
+
+// Remove cart item
+app.delete('/api/cart', authenticateToken, (req, res) => {
+  const userId = req.user.id;
+  const { item_id } = req.body;
+  if (!item_id) return res.status(400).json({ error: 'Missing item_id' });
+  connection.query(
+    'DELETE FROM cart WHERE user_id = ? AND item_id = ?',
+    [userId, item_id],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err });
+      res.json({ success: true });
+    }
+  );
+});
+
 app.listen(port,()=>{
     console.log(`Server Started on http://localhost:${port} `)
 })

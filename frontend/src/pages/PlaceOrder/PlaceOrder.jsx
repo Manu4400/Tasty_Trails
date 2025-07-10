@@ -1,11 +1,9 @@
-// eslint-disable-next-line no-unused-vars
 import React, { useContext } from 'react'
 import './PlaceOrder.css'
 import { StoreContext } from '../../context/StoreContext'
 
 const PlaceOrder = () => {
 
-  // eslint-disable-next-line no-undef
   const {getTotalCartAmount} = useContext(StoreContext)
 
   return (

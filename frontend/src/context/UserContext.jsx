@@ -5,7 +5,6 @@ export const UserContext = createContext(null);
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
-  // On mount, check for token in localStorage and fetch user info
   useEffect(() => {
     const token = localStorage.getItem('jwt_token');
     if (token && !user) {
@@ -21,7 +20,6 @@ export const UserProvider = ({ children }) => {
     }
   }, []);
 
-  // When user logs in, persist token
   const setUserWithToken = (userObj) => {
     if (userObj?.token) {
       localStorage.setItem('jwt_token', userObj.token);
@@ -29,7 +27,6 @@ export const UserProvider = ({ children }) => {
     setUser(userObj);
   };
 
-  // When user logs out, clear token
   const logout = () => {
     localStorage.removeItem('jwt_token');
     setUser(null);
