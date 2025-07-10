@@ -11,7 +11,7 @@ const FoodItem = ({ id, name, price, description, image }) => {
   return (
     <div className='food-item'>
       <div className="food-item-img-container">
-        <img className='food-item-image' src={`/${image}`} alt={name} />
+        <img className='food-item-image' src={image.startsWith('food_images/') ? `/food_images/${image.split('/').pop()}` : image.startsWith('/') ? image : `/food_images/${image}`} alt={name} />
         {cartItems[id] > 0 ? (
           <div className='food-item-counter'>
             <img
